@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Clean_Pakistan.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d32f7d2c824ce11bcf428c0daf61081d3a3c5790")]
 [assembly: System.Reflection.AssemblyProductAttribute("Clean_Pakistan.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Clean_Pakistan.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
