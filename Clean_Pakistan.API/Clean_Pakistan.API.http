@@ -1,0 +1,6 @@
+@Clean_Pakistan.API_HostAddress = http://localhost:5155
+
+GET {{Clean_Pakistan.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
