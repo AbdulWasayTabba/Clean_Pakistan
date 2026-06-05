@@ -5,17 +5,21 @@ namespace Clean_Pakistan.API.Services
 {
     public class EmailService
     {
-        public static void SendOtpEmail(string targetEmail, string otp)
+        private readonly IConfiguration _config;
+        public EmailService(IConfiguration config)
+        {
+            _config = config;
+        }
+        public async Task SendOtpEmail(string targetEmail, string otp)
         {
             // Replace with your actual development Gmail address
-            var senderEmail = "cleanpakistantest@gmail.com";
-
-            // You MUST use an "App Password" from your Google Account settings, NOT your real password!
-            var appPassword = "abcd efgh ijkl mnop";
+            var senderEmail = _config["EmailSettings:SenderEmail"];
+            var appPassword = _config["EmailSettings:AppPassword"];
 
             var client = new SmtpClient("smtp.gmail.com")
             {
                 Port = 587,
+                UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(senderEmail, appPassword),
                 EnableSsl = true,
             };
@@ -29,7 +33,7 @@ namespace Clean_Pakistan.API.Services
             };
             mailMessage.To.Add(targetEmail);
 
-            client.Send(mailMessage);
+            await client.SendMailAsync(mailMessage);
         }
     }
 } 

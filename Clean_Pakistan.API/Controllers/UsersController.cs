@@ -1,7 +1,7 @@
 ﻿using Clean_Pakistan.API;
-using Clean_Pakistan.API.Services;
 using Clean_Pakistan.API.Data;
 using Clean_Pakistan.API.Models;
+using Clean_Pakistan.API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 [Route("api/[controller]")]
@@ -16,10 +17,14 @@ using System.Text;
 public class UsersController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
-    public UsersController(ApplicationDbContext context)
+    private readonly EmailService _emailService;
+    private readonly IConfiguration _config;
+    public UsersController(ApplicationDbContext context, EmailService emailService,IConfiguration config)
     {
         _context = context;
-    }
+        _emailService = emailService;
+        _config = config;
+}
 
     // GET: api/User
     [HttpGet]
@@ -116,8 +121,7 @@ public class UsersController : ControllerBase
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
         // Generate a secure 6-digit OTP
-        string otp = new Random().Next(100000, 999999).ToString();
-
+        string otp = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
         var user = new User
         {
             FullName = request.FullName,
@@ -133,7 +137,7 @@ public class UsersController : ControllerBase
         await _context.SaveChangesAsync();
 
         // Trigger your EmailService here!
-        EmailService.SendOtpEmail(user.Email, otp);
+        await _emailService.SendOtpEmail(user.Email, otp);
 
         return Ok(new { message = "Account created. Please check your email for the OTP." });
     }
@@ -177,7 +181,7 @@ public class UsersController : ControllerBase
     // --- HELPER METHOD TO GENERATE TOKEN ---
     private string GenerateJwtToken(User user)
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("CleanPakistanSuperSecretMasterKey2026_DoNotShare!!!"));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var claims = new[] {
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),

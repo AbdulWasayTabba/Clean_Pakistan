@@ -16,6 +16,7 @@ namespace Clean_Pakistan.API.Data
         public DbSet<User> Users { get; set; }
         public DbSet<CivicIssue> CivicIssues { get; set; }
         public DbSet<IssueVerification> IssueVerifications { get; set; }
+        public DbSet<Complaint> Complaints { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
